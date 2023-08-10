@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qf.mapper.InfoMapper" >
+  <resultMap id="BaseResultMap" type="com.qf.entity.po.Info" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="dept_id" property="deptId" jdbcType="BIGINT" />
+    <result column="wan_ip" property="wanIp" jdbcType="VARCHAR" />
+    <result column="event_time" property="eventTime" jdbcType="TIMESTAMP" />
+    <result column="event_type" property="eventType" jdbcType="INTEGER" />
+    <result column="event_status" property="eventStatus" jdbcType="INTEGER" />
+    <result column="event_reasons" property="eventReasons" jdbcType="VARCHAR" />
+    <result column="dept_name" property="deptName" jdbcType="VARCHAR" />
+    <result column="event_types" property="eventTypes" jdbcType="VARCHAR" />
+    <result column="event_statuss" property="eventStatuss" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <select id="selectList" resultMap="BaseResultMap">
+  SELECT a.id, a.dept_id, a.wan_ip, a.event_time, a.event_reasons,a.event_type,a.event_reasons,a.event_status,
+  d.dept_name, d.dept_no, d.order_num,
+  m1.display_value AS event_types,
+  m2.display_value AS event_statuss
+  FROM info a
+  LEFT JOIN dept d ON a.dept_id = d.dept_id
+  LEFT JOIN menu m1 ON a.event_type = m1.actual_value AND m1.menu_name ='event_type'
+  LEFT JOIN menu m2 ON a.event_status = m2.actual_value AND m2.menu_name ='event_status'
+  <if test="eventReasons != null and eventReasons != ''">
+    WHERE a.event_reasons LIKE CONCAT('%',#{eventReasons},'%')
+  </if>
+  LIMIT #{offset},#{pageSize}
+  </select>
+</mapper>
